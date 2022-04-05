@@ -28,9 +28,13 @@ from validate import validateCharacter
 import random
 import math
 import time
+import re
 import os
 
 allCharacters = []
+
+# Prompting for project name
+PROJECT_NAME = re.sub(r'[\W_]+', '', input("Enter a name for your NFT project: ").replace(" ", ""))
 
 # Walk assets folder to calculate maximum collection size
 def getMaxCollectionSize(cwd='assets'):
@@ -76,8 +80,8 @@ def generateToken(character):
   print(f'Token #{character["id"]} generated.')
   
   token = composite.convert('RGB')
-  filename = str(character["id"]) + ".png"
-  token.save("./tokens/" + filename)
+  filename = PROJECT_NAME + "_" + str(character["id"]) + ".png"
+  token.save(f'./{PROJECT_NAME}_tokens/{filename}')
   print(f'Token #{character["id"]} saved.')
 
 def main():
@@ -87,7 +91,7 @@ def main():
   # Prompting number of tokens to generate
   while (not validCollectionSize):
     try:
-      print(f'The maximum size of this collection, based on provided assets, is {maxCollectionSize} tokens.')
+      print(f'\nThe maximum size of this collection, based on provided assets, is {maxCollectionSize} tokens.')
       collectionSize = input("How many tokens would you like to generate? (Leave blank for maximum) ")
       if collectionSize == "":
         print(f'\n{maxCollectionSize} tokens will be generated.')
@@ -125,12 +129,12 @@ def main():
         i = i + 1
 
   # Generate token images for each character
-  if not os.path.exists('./tokens'):
-    os.mkdir(f'./tokens')
+  if not os.path.exists(f'./{PROJECT_NAME}_tokens'):
+    os.mkdir(f'./{PROJECT_NAME}_tokens')
   try:
     for character in allCharacters:
       generateToken(character)
-    print("\n\nAll tokens were successfully generated and saved to the 'tokens' folder. Enjoy!")
+    print(f'\n\nAll tokens were successfully generated and saved to the \'{PROJECT_NAME}_tokens\' folder. Enjoy!')
   except:
     print("\n\nAn error occurred while generating tokens. Please try again.")
 
