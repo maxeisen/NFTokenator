@@ -1,4 +1,5 @@
-# NFTokenator - an easy-to-use, extensible, and customizable tool for generating NFTs.
+# NFTokenator
+> An easy-to-use, extensible, and customizable tool for generating NFTs.
 
 ### **Author**: Max Eisen
 
