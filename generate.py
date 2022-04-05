@@ -1,5 +1,5 @@
 '''
-NFT Generator - for Unknown NFT Project
+NFTokenator - an easy-to-use, extensible, and customizable tool for generating NFTs.
 
 Author: Max Eisen
 Updated: April 5, 2022
@@ -7,7 +7,6 @@ Updated: April 5, 2022
 Requirements:
 - Python 3.7 or newer
 - Pillow (PIL)
-- IPython
 - 'traits.py' file with your defined traits, layers for each trait and each layer's weight in the form of:
   traitList = ["background", "body", "shirt"...]
   background = ["Black And White", "Green And Blue"]
@@ -24,10 +23,9 @@ Usage
 '''
 
 import traits
-from PIL import Image 
-from IPython.display import display 
+from PIL import Image
+from validate import validateCharacter
 import random
-import json
 import math
 import time
 import os
@@ -57,13 +55,6 @@ def createCharacter():
     return createCharacter()
   else:
     return character
-
-# Implement custom validation logic here
-def validateCharacter(character):
-  for trait in traits.traitList:
-    if character[trait] == "":
-      return False
-  return True
 
 # Check if all characters are unique
 def characterUniqueCheck(characterList):
@@ -123,7 +114,7 @@ def main():
 
   # Check uniqueness of each character
   charactersUnique = characterUniqueCheck(allCharacters)
-  print(f'\n{collectionSize} generated characters were found to be {"unique. Generating tokens..." if charactersUnique else "not unique. Regenerating characters..."}.')
+  print(f'\n{collectionSize} generated characters were found to be {"unique and valid. Generating tokens..." if charactersUnique else "not unique. Regenerating characters..."}.')
   time.sleep(2)
 
   # Assign unique id to each character
