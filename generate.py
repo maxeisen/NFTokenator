@@ -136,8 +136,12 @@ def main():
   # Generate token images for each character
   if not os.path.exists('./tokens'):
     os.mkdir(f'./tokens')
-  for character in allCharacters:
-    generateToken(character)
+  try:
+    for character in allCharacters:
+      generateToken(character)
+    print("\n\nAll tokens were successfully generated and saved to the 'tokens' folder. Enjoy!")
+  except:
+    print("\n\nAn error occurred while generating tokens. Please try again.")
 
 if __name__ == "__main__":
   main()
