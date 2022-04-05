@@ -1,5 +1,5 @@
-/dev_assets
-dev_traits.py
+/assets*
+traits*.py
 /tokens
 /__pycache__
 /env
