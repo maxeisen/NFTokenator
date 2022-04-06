@@ -7,7 +7,7 @@
 ### Dependencies
 - Python 3.7 or newer
 - Pillow (PIL)
-- IPython
+- NumPy
 
 ### Setup 
 - `traits.py` file with your defined traits, layers for each trait and each layer's weight in the form of:  

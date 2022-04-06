@@ -7,6 +7,7 @@ Updated: April 5, 2022
 Requirements:
 - Python 3.7 or newer
 - Pillow (PIL)
+- NumPy
 - 'traits.py' file with your defined traits, layers for each trait and each layer's weight in the form of:
   traitList = ["background", "body", "shirt"...]
   background = ["Black And White", "Green And Blue"]
@@ -24,9 +25,10 @@ Usage
 
 import traits
 from PIL import Image
+import numpy
 from validate import validateCharacter
 import random
-import math
+import json
 import time
 import re
 import os
@@ -44,7 +46,7 @@ def getMaxCollectionSize(cwd='assets'):
       traitLayerCounts.append(len([file for file in os.listdir(f'{cwd}/{subdir}')]))
     else:
       continue
-  return(math.prod(traitLayerCounts))
+  return(numpy.prod(traitLayerCounts))
 
 maxCollectionSize = getMaxCollectionSize()
 
@@ -65,6 +67,24 @@ def characterUniqueCheck(characterList):
     checked = list()
     return not any(i in checked or checked.append(i) for i in characterList)
 
+# Count total number of each trait option
+def countTraits():
+  traitCounts = {}
+  for trait in traits.traitList:
+    currentTraitCount = {}
+    for character in allCharacters:
+      if character[trait] in currentTraitCount:
+        currentTraitCount[character[trait]] += 1
+      else:
+        currentTraitCount[character[trait]] = 1
+    traitCounts[trait] = currentTraitCount
+  try:
+    with open(f'./{PROJECT_NAME}_files/rarities.json', 'w') as outfile:
+      json.dump(traitCounts, outfile, indent=4, sort_keys=False)
+    print(f'\nRarities written to {PROJECT_NAME}_files/rarities.json')
+  except:
+    print("\nAn error occurred while writing the rarities file.")
+
 # Generate and save a token image for a given character
 def generateToken(character):
   print(f'\nGenerating token #{character["id"]}.')
@@ -81,7 +101,7 @@ def generateToken(character):
   
   token = composite.convert('RGB')
   filename = PROJECT_NAME + "_" + str(character["id"]) + ".png"
-  token.save(f'./{PROJECT_NAME}_tokens/{filename}')
+  token.save(f'./{PROJECT_NAME}_files/tokens/{filename}')
   print(f'Token #{character["id"]} saved.')
 
 def main():
@@ -93,8 +113,12 @@ def main():
     try:
       print(f'\nThe maximum size of this collection, based on provided assets, is {maxCollectionSize} tokens.')
       collectionSize = input("How many tokens would you like to generate? (Leave blank for maximum) ")
-      if collectionSize == "":
+      if (collectionSize == "") or (int(collectionSize) == maxCollectionSize):
         print(f'\n{maxCollectionSize} tokens will be generated.')
+        print("\nWARNING: This ignores rarities and will generate every possible combination for the collection.")
+        print("It also may take a long time.")
+        print("Press ctrl+c to cancel.")
+        time.sleep(8)
         collectionSize = maxCollectionSize
         validCollectionSize = True
       elif int(collectionSize) > maxCollectionSize:
@@ -110,6 +134,9 @@ def main():
       print("\nPlease enter a valid number.")
       collectionSize = 0
       time.sleep(1)
+    except:
+      print("\n\nScript has stopped. Please try again.")
+      exit()
 
   # Create defined number of characters
   for i in range(int(collectionSize)):
@@ -128,13 +155,20 @@ def main():
         item["id"] = i
         i = i + 1
 
-  # Generate token images for each character
-  if not os.path.exists(f'./{PROJECT_NAME}_tokens'):
-    os.mkdir(f'./{PROJECT_NAME}_tokens')
+  # Create project directories
+  if not os.path.exists(f'./{PROJECT_NAME}_files'):
+    os.mkdir(f'./{PROJECT_NAME}_files')
+  if not os.path.exists(f'./{PROJECT_NAME}_files/tokens'):
+    os.mkdir(f'./{PROJECT_NAME}_files/tokens')
+
+  # Write trait counts to rarities JSON file
+  countTraits()
+  
+  # Generate tokens for each character
   try:
     for character in allCharacters:
       generateToken(character)
-    print(f'\n\nAll tokens were successfully generated and saved to the \'{PROJECT_NAME}_tokens\' folder. Enjoy!')
+    print(f'\n\nAll {collectionSize} tokens were successfully generated and saved to the \'{PROJECT_NAME}_files/tokens\' folder. Enjoy!\n')
   except:
     print("\n\nAn error occurred while generating tokens. Please try again.")
 

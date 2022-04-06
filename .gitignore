@@ -1,6 +1,6 @@
 /assets*
 traits*.py
-/tokens
+/*_files
 /__pycache__
 /env
 custom.zip
