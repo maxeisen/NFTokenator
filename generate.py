@@ -2,7 +2,7 @@
 NFTokenator - an easy-to-use, extensible, and customizable tool for generating NFTs.
 
 Author: Max Eisen
-Updated: April 5, 2022
+Updated: April 6, 2022
 
 Requirements:
 - Python 3.7 or newer
