@@ -5,7 +5,7 @@ Customize these however you please, but make sure there is at least a 'backgroun
 To use this file for the generator, remove 'example_' from the filename.
 '''
 
-traitList = ["background", "body", "face"]
+traitList = ["background", "body", "face"] # This should be in the order you want the layers to be placed, starting with background
 
 background = ["Light Blue Sample", "Purple Sample", "RGB Sample"]
 background_weights = [40, 40, 20]
