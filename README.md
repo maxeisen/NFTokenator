@@ -7,6 +7,7 @@
 ### Dependencies
 - Python 3.7 or newer
 - Pillow (PIL)
+- Progress
 - NumPy
 
 ### Setup 

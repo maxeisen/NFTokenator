@@ -2,11 +2,12 @@
 NFTokenator - an easy-to-use, extensible, and customizable tool for generating NFTs.
 
 Author: Max Eisen
-Updated: April 6, 2022
+Updated: May 27, 2022
 
 Requirements:
 - Python 3.7 or newer
 - Pillow (PIL)
+- Progress
 - NumPy
 - 'traits.py' file with your defined traits, layers for each trait and each layer's weight in the form of:
   traitList = ["background", "body", "shirt"...]
@@ -25,6 +26,7 @@ Usage
 
 import traits
 from PIL import Image
+from progress.bar import IncrementalBar
 import numpy
 from validate import validateCharacter
 import random
@@ -81,13 +83,13 @@ def countTraits():
   try:
     with open(f'./{PROJECT_NAME}_files/rarities.json', 'w') as outfile:
       json.dump(traitCounts, outfile, indent=4, sort_keys=False)
-    print(f'\nRarities written to {PROJECT_NAME}_files/rarities.json')
+    print(f'\nRarities written to {PROJECT_NAME}_files/rarities.json\n')
   except:
     print("\nAn error occurred while writing the rarities file.")
 
 # Generate and save a token image for a given character
 def generateToken(character):
-  print(f'\nGenerating token #{character["id"]}.')
+  # print(f'\nGenerating token #{character["id"]}.')
   background = Image.open(f'./assets/background/{character["background"].replace(" ","")}.png').convert('RGBA')
   for key in character:
     if key == "background":
@@ -97,12 +99,18 @@ def generateToken(character):
       continue
     trait = Image.open(f'./assets/{key}/{character[key].replace(" ", "")}.png').convert('RGBA')
     composite = Image.alpha_composite(composite, trait)
-  print(f'Token #{character["id"]} generated.')
+  # print(f'Token #{character["id"]} generated.')
   
   token = composite.convert('RGB')
   filename = PROJECT_NAME + "_" + str(character["id"]) + ".png"
   token.save(f'./{PROJECT_NAME}_files/tokens/{filename}')
-  print(f'Token #{character["id"]} saved.')
+  # print(f'Token #{character["id"]} saved.')
+
+class ProgressBar(IncrementalBar):
+    suffix = 'Estimated time remaining: %(custom_eta)s'
+    @property
+    def custom_eta(self):
+      return (str(self.eta//60)+' minutes') if (self.eta > 60) else (str(self.eta)+' seconds')
 
 def main():
   collectionSize = 0
@@ -166,8 +174,11 @@ def main():
   
   # Generate tokens for each character
   try:
+    bar = ProgressBar('Generating token %(index)d/%(max)d', max=collectionSize)
     for character in allCharacters:
       generateToken(character)
+      bar.next()
+    bar.finish()
     print(f'\n\nAll {collectionSize} tokens were successfully generated and saved to the \'{PROJECT_NAME}_files/tokens\' folder. Enjoy!\n')
   except:
     print("\n\nAn error occurred while generating tokens. Please try again.")
